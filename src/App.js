@@ -6,6 +6,7 @@ class App extends React.Component{
   constructor(){
     super();
     this.state={
+      pattern:[1,2,3,4,3],
       box1:false,
       box2:false,
       box3:false,
@@ -21,11 +22,19 @@ class App extends React.Component{
     // let currentBox = "box"+id;// "box1"
     // let currentState = this.state[currentBox]; //false
     // this.setState({[currentBox]: !currentState});
+    let currPat = this.state.pattern;
+    let currentState;
 
-    for(let i=1;i<5;i++){
+    for(let i=0;i<currPat.length;i++){
+
       setTimeout(()=>{
-        this.setState({["box"+i]: true});
-      }, 500*i)
+        // currentState = this.state["box"+currPat[i]];
+        this.setState({["box"+currPat[i]]: true});
+        setTimeout(()=>{
+          this.setState({["box"+currPat[i]]: false});
+        }, 500)
+      }, 800*currPat[i])
+
     }
 
   }
@@ -38,7 +47,6 @@ class App extends React.Component{
           <Box active={this.state.box2} handleClick={this.handleClick} id={2} color={{num1:0, num2:255, num3:0}}/>
           <Box active={this.state.box4} handleClick={this.handleClick} id={4} color={{num1:255, num2:255, num3:0}}/>
           <Box active={this.state.box3} handleClick={this.handleClick} id={3} color={{num1:0, num2:0, num3:255}}/>
-
         </div>
       </div>
     )
