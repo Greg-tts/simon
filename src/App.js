@@ -13,10 +13,12 @@ class App extends React.Component{
     return(
       <div>
         <h1>Simon</h1>
-        <Box id={1} color={{num1:255, num2:0, num3:0}}/>
-        <Box id={2} color={{num1:0, num2:255, num3:0}}/>
-        <Box id={3} color={{num1:0, num2:0, num3:255}}/>
-        <Box id={4} color={{num1:255, num2:255, num3:0}}/>
+        <div id="boxWrapper">
+          <Box id={1} color={{num1:255, num2:0, num3:0}}/>
+          <Box id={2} color={{num1:0, num2:255, num3:0}}/>
+          <Box id={3} color={{num1:0, num2:0, num3:255}}/>
+          <Box id={4} color={{num1:255, num2:255, num3:0}}/>
+        </div>
       </div>
     )
   }
@@ -28,7 +30,7 @@ const Box = (props) =>{
     backgroundColor:"rgba("+ props.color.num1 + "," + props.color.num2 + "," + props.color.num3 + ", .25)"
   }
   return(
-    <div style={boxStyle}>box {props.id}</div>
+    <div onClick={()=>console.log("trigger")} className="boxStyling" style={boxStyle}>box {props.id}</div>
   )
 }
 

@@ -1,0 +1,9 @@
+#boxWrapper {
+    width: 100vw;
+}
+
+.boxStyling {
+    display: inline-block;
+    width: 50%;
+    height: 100px;
+}
