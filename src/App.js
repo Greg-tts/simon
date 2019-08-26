@@ -9,8 +9,13 @@ class App extends React.Component{
 
     }
   }
-  handleClick=()=>{
-    console.log("trigger");
+  // // The HTML way
+  // handleClick=(event)=>{
+  //   console.log(event.target.dataset.id);
+  // }
+
+  handleClick=(id)=>{
+    console.log(id);
   }
   render(){
     return(
@@ -31,8 +36,14 @@ const Box = (props) =>{
   let boxStyle = {
     backgroundColor:"rgba("+ props.color.num1 + "," + props.color.num2 + "," + props.color.num3 + ", .25)"
   }
+
   return(
-    <div onClick={props.handleClick} className="boxStyling" style={boxStyle}>box {props.id}</div>
+    /* 
+      The HTML Way
+      <div data-id={props.id} onClick={props.handleClick} className="boxStyling" style={boxStyle}>{"box " + props.id}</div> 
+    */
+    <div onClick={()=>{props.handleClick(props.id)}
+  } className="boxStyling" style={boxStyle}>{"box " + props.id}</div>
   )
 }
 
