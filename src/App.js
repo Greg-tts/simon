@@ -18,10 +18,16 @@ class App extends React.Component{
   // }
 
   handleClick=(id)=>{
-    let currentBox = "box"+id;
-    let currentState = this.state[currentBox];
-    console.log(currentBox);
-    this.setState({[currentBox]: !currentState});
+    // let currentBox = "box"+id;// "box1"
+    // let currentState = this.state[currentBox]; //false
+    // this.setState({[currentBox]: !currentState});
+
+    for(let i=1;i<5;i++){
+      setTimeout(()=>{
+        this.setState({["box"+i]: true});
+      }, 500*i)
+    }
+
   }
   render(){
     return(
@@ -30,8 +36,9 @@ class App extends React.Component{
         <div id="boxWrapper">
           <Box active={this.state.box1} handleClick={this.handleClick} id={1} color={{num1:255, num2:0, num3:0}}/>
           <Box active={this.state.box2} handleClick={this.handleClick} id={2} color={{num1:0, num2:255, num3:0}}/>
-          <Box active={this.state.box3} handleClick={this.handleClick} id={3} color={{num1:0, num2:0, num3:255}}/>
           <Box active={this.state.box4} handleClick={this.handleClick} id={4} color={{num1:255, num2:255, num3:0}}/>
+          <Box active={this.state.box3} handleClick={this.handleClick} id={3} color={{num1:0, num2:0, num3:255}}/>
+
         </div>
       </div>
     )
