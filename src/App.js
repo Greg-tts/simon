@@ -6,7 +6,7 @@ class App extends React.Component{
   constructor(){
     super();
     this.state={
-      pattern:[1,2,3,4,3],
+      pattern:[1,2,3,2,4],
       box1:false,
       box2:false,
       box3:false,
@@ -33,7 +33,7 @@ class App extends React.Component{
         setTimeout(()=>{
           this.setState({["box"+currPat[i]]: false});
         }, 500)
-      }, 800*currPat[i])
+      }, 800*i)
 
     }
 
