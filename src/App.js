@@ -6,37 +6,29 @@ class App extends React.Component{
   constructor(){
     super();
     this.state={
-      pattern:[1,2,3,2,4],
+      compPattern:[1,2,3,2,4],
+      userPattern:[],
       box1:false,
       box2:false,
       box3:false,
       box4:false
     }
   }
-  // // The HTML way
-  // handleClick=(event)=>{
-  //   console.log(event.target.dataset.id);
-  // }
 
-  handleClick=(id)=>{
-    // let currentBox = "box"+id;// "box1"
-    // let currentState = this.state[currentBox]; //false
-    // this.setState({[currentBox]: !currentState});
-    let currPat = this.state.pattern;
-    let currentState;
-
+  showPattern=(currPat)=>{
     for(let i=0;i<currPat.length;i++){
-
       setTimeout(()=>{
-        // currentState = this.state["box"+currPat[i]];
         this.setState({["box"+currPat[i]]: true});
         setTimeout(()=>{
           this.setState({["box"+currPat[i]]: false});
         }, 500)
       }, 800*i)
-
     }
+  }
 
+  handleClick=(id)=>{
+    let compPat = this.state.compPattern;
+    this.showPattern(compPat);
   }
   render(){
     return(
@@ -60,10 +52,6 @@ const Box = (props) =>{
   }
 
   return(
-    /* 
-      The HTML Way
-      <div data-id={props.id} onClick={props.handleClick} className="boxStyling" style={boxStyle}>{"box " + props.id}</div> 
-    */
     <div onClick={()=>{props.handleClick(props.id)}
   } className="boxStyling" style={boxStyle}>{"box " + props.id}</div>
   )
