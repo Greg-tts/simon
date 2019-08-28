@@ -7,7 +7,8 @@ class App extends React.Component{
     super();
     this.state={
       score:0,
-      clear:false,
+      display:true,
+      disabled:true,
       compPattern:[],
       userPattern:[],
       box1:false,
@@ -18,30 +19,27 @@ class App extends React.Component{
   }
 
   componentDidMount(){
+    this.rotatingLights(3);
     this.addRandomNum();
   }
 
   componentDidUpdate(){
     let inputArr = this.state.userPattern;
     let compArr = this.state.compPattern;
-    let isCorrect=false;
-    let newPattern=[];
-    for(let i=0;i<inputArr.length;i++){
-      if(inputArr[i] === compArr[i]){
-        isCorrect=true;
-      }
-      if(!isCorrect && this.state.clear === false) {
-        this.setState({clear:true})
-        // this.setState({score:"Final Score: " + this.state.score + 1})
-      }
+
+    let boolArr = inputArr.map((item, index)=>{
+      return item === compArr[index];
+    })
+    let isCorrect = !boolArr.includes(false);
+
+    if(isCorrect !== true && this.state.display === true) {
+      this.setState({display:false})
     }
     if(compArr.length <= inputArr.length && isCorrect){
-      console.log(true);
       this.setState({score:this.state.score + 1})
       let newNum = this.addRandomNum();
-      newPattern = [...inputArr, newNum];
       this.setState({userPattern:[]});
-      this.showPattern(newPattern);
+      this.showPattern([...compArr, newNum]);
     }
   }
 
@@ -60,43 +58,54 @@ class App extends React.Component{
   }
 
   showPattern=(currPat)=>{
+
     for(let i=0;i<currPat.length;i++){
       setTimeout(()=>{
-        this.blink(currPat[i]);
+        this.blink(currPat[i], 300);
       }, 800*(i+1))
     }
+
   }
 
-  blink=(boxId)=>{
+  blink=(boxId, speed)=>{
       this.setState({["box"+boxId]: true});
       setTimeout(()=>{
         this.setState({["box"+boxId]: false});
-      }, 300)
+      }, speed)
   }
 
   handleClick=(id)=>{
-    this.blink(id);
+    this.blink(id, 300);
     this.setState({
       userPattern: [...this.state.userPattern, id]
     });
   }
 
+  rotatingLights=(rotations)=>{
+    let boxArr = [1,2,3,4];
+    for(let i=1;i<5*rotations;i++){
+      setTimeout(()=>{
+        this.blink(boxArr[i%4],150);
+      }, 100*(i+1))
+    }
+  }
+
   startFunc=()=>{
+    this.setState({disabled:false})
     let compPat = this.state.compPattern;
     this.showPattern(compPat);
   }
 
   render(){
-    console.log("Render", this.state.compPattern, this.state.userPattern)
     return(
       <div id="wrapper">
         <h1>Simon</h1>
         <div>{"Score: " + this.state.score}</div>
-        <div id="boxWrapper" style={{display:this.state.clear ? "none" : "block"}}>
-          <Box active={this.state.box1} handleClick={this.handleClick} id={1} radius={"100px 0 0 0"} color={{num1:255, num2:0, num3:0}}/>
-          <Box active={this.state.box2} handleClick={this.handleClick} id={2} radius={"0 100px 0 0"} color={{num1:0, num2:255, num3:0}}/>
-          <Box active={this.state.box4} handleClick={this.handleClick} id={4} radius={"0 0 0 100px"} color={{num1:255, num2:255, num3:0}}/>
-          <Box active={this.state.box3} handleClick={this.handleClick} id={3} radius={"0 0 100px 0"} color={{num1:0, num2:0, num3:255}}/>
+        <div id="boxWrapper" style={{display:this.state.display ? "block": "none"}}>
+          <Box disabled={this.state.disabled} active={this.state.box1} handleClick={this.handleClick} id={1} radius={"100px 0 0 0"} color={{num1:255, num2:0, num3:0}}/>
+          <Box disabled={this.state.disabled} active={this.state.box2} handleClick={this.handleClick} id={2} radius={"0 100px 0 0"} color={{num1:0, num2:255, num3:0}}/>
+          <Box disabled={this.state.disabled} active={this.state.box4} handleClick={this.handleClick} id={4} radius={"0 0 0 100px"} color={{num1:255, num2:255, num3:0}}/>
+          <Box disabled={this.state.disabled} active={this.state.box3} handleClick={this.handleClick} id={3} radius={"0 0 100px 0"} color={{num1:0, num2:0, num3:255}}/>
         </div>
         <button onClick={this.startFunc}>Start Game</button>
       </div>
@@ -106,7 +115,9 @@ class App extends React.Component{
 
 const Box = (props) =>{
   let opacity = props.active ? ".75" : ".25";
+  let disableClick = props.disabled ? "none" : "auto";
   let boxStyle = {
+    pointerEvents: disableClick,
     borderRadius:props.radius,
     backgroundColor:"rgba("+ props.color.num1 + "," + props.color.num2 + "," + props.color.num3 + "," + opacity + ")"
   }
