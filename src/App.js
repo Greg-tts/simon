@@ -27,6 +27,9 @@ class App extends React.Component{
 
     this.rotatingLights(3);
     this.setState({ highScore, compPattern: [...this.state.compPattern, randNum] });
+      import('./appScript.js')
+    .then(module => this.setState({ module: module.default }))
+
   }
 
   componentDidUpdate(){
@@ -113,6 +116,7 @@ class App extends React.Component{
   render(){
     return(
       <div id="wrapper">
+        <canvas id="c"></canvas>
         <h1>Simon</h1>
         <button onClick={(()=>this.setState({audioControl:!this.state.audioControl}))}>Audio Controls</button>
         <audio controls={this.state.audioControl && "controls"} autoplay={this.state.audioAuto && "autoplay"}>
