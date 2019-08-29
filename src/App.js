@@ -7,6 +7,7 @@ class App extends React.Component{
     super();
     this.state={
       score:0,
+      highScore:0,
       display:true,
       disabled:true,
       compPattern:[],
@@ -21,6 +22,8 @@ class App extends React.Component{
   componentDidMount(){
     this.rotatingLights(3);
     this.addRandomNum();
+    const highScore = localStorage.getItem('highScore');
+    this.setState({ highScore });
   }
 
   componentDidUpdate(){
@@ -41,6 +44,15 @@ class App extends React.Component{
       this.setState({userPattern:[]});
       this.showPattern([...compArr, newNum]);
     }
+    let score = this.state.score;
+    if(score > this.state.highScore){
+      this.setState({highScore:score});
+      localStorage.setItem('highScore',score);
+    }
+  }
+  resetHighScore=()=>{
+    this.setState({highScore:0});
+    localStorage.setItem('highScore',0);
   }
 
   getRandomInt=(min, max)=>{
@@ -100,6 +112,8 @@ class App extends React.Component{
     return(
       <div id="wrapper">
         <h1>Simon</h1>
+        <div>{"High Score: " + this.state.highScore}</div>
+        <button onClick={this.resetHighScore}>Reset High Score</button>
         <div>{"Score: " + this.state.score}</div>
         <div id="boxWrapper" style={{display:this.state.display ? "block": "none"}}>
           <Box disabled={this.state.disabled} active={this.state.box1} handleClick={this.handleClick} id={1} radius={"100px 0 0 0"} color={{num1:255, num2:0, num3:0}}/>
