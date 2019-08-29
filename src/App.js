@@ -1,29 +1,32 @@
 import React from 'react';
 import './App.css';
 
-
 class App extends React.Component{
   constructor(){
     super();
     this.state={
       score:0,
       highScore:0,
-      display:true,
+      displayGame:true,
+      displayStartButton:true,
       disabled:true,
       compPattern:[],
       userPattern:[],
       box1:false,
       box2:false,
       box3:false,
-      box4:false
+      box4:false,
+      audioControl:false,
+      audioAuto:false
     }
   }
 
   componentDidMount(){
+    let highScore = localStorage.getItem('highScore');
+    let randNum = this.getRandomInt();
+
     this.rotatingLights(3);
-    this.addRandomNum();
-    const highScore = localStorage.getItem('highScore');
-    this.setState({ highScore });
+    this.setState({ highScore, compPattern: [...this.state.compPattern, randNum] });
   }
 
   componentDidUpdate(){
@@ -33,16 +36,19 @@ class App extends React.Component{
     let boolArr = inputArr.map((item, index)=>{
       return item === compArr[index];
     })
+    console.log(inputArr, compArr, boolArr)
     let isCorrect = !boolArr.includes(false);
 
-    if(isCorrect !== true && this.state.display === true) {
-      this.setState({display:false})
+    if(isCorrect !== true && this.state.displayGame === true) {
+      this.setState({displayGame:false})
     }
     if(compArr.length <= inputArr.length && isCorrect){
       this.setState({score:this.state.score + 1})
-      let newNum = this.addRandomNum();
-      this.setState({userPattern:[]});
-      this.showPattern([...compArr, newNum]);
+
+      let newRandNum = this.getRandomInt();
+      this.setState({userPattern:[], compPattern: [...this.state.compPattern, newRandNum]});
+
+      this.showPattern([...compArr, newRandNum]);
     }
     let score = this.state.score;
     if(score > this.state.highScore){
@@ -50,33 +56,24 @@ class App extends React.Component{
       localStorage.setItem('highScore',score);
     }
   }
+
   resetHighScore=()=>{
     this.setState({highScore:0});
     localStorage.setItem('highScore',0);
   }
 
-  getRandomInt=(min, max)=>{
-    min = Math.ceil(min);
-    max = Math.floor(max);
+  getRandomInt=()=>{
+    let min = Math.ceil(1);
+    let max = Math.floor(5);
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-  addRandomNum=()=>{
-    let randNum = this.getRandomInt(1,5);
-    this.setState({
-      compPattern: [...this.state.compPattern, randNum]
-    })
-    return randNum;
-  }
-
   showPattern=(currPat)=>{
-
     for(let i=0;i<currPat.length;i++){
       setTimeout(()=>{
         this.blink(currPat[i], 300);
       }, 800*(i+1))
     }
-
   }
 
   blink=(boxId, speed)=>{
@@ -103,25 +100,35 @@ class App extends React.Component{
   }
 
   startFunc=()=>{
-    this.setState({disabled:false})
+    this.setState({disabled:false, displayStartButton:false, audioAuto:true})
     let compPat = this.state.compPattern;
     this.showPattern(compPat);
+  }
+  restartFunc=()=>{
+    let randNum = this.getRandomInt();
+    this.setState({displayGame:true, score:0, compPattern:[randNum], userPattern:[]})
+    this.showPattern([randNum]);
   }
 
   render(){
     return(
       <div id="wrapper">
         <h1>Simon</h1>
+        <button onClick={(()=>this.setState({audioControl:!this.state.audioControl}))}>Audio Controls</button>
+        <audio controls={this.state.audioControl && "controls"} autoplay={this.state.audioAuto && "autoplay"}>
+          <source src="onandon.ogg" type="audio/ogg" />
+          Your browser does not support the audio element.
+        </audio>
         <div>{"High Score: " + this.state.highScore}</div>
         <button onClick={this.resetHighScore}>Reset High Score</button>
         <div>{"Score: " + this.state.score}</div>
-        <div id="boxWrapper" style={{display:this.state.display ? "block": "none"}}>
+        <div id="boxWrapper" style={{display:this.state.displayGame ? "block": "none"}}>
           <Box disabled={this.state.disabled} active={this.state.box1} handleClick={this.handleClick} id={1} radius={"100px 0 0 0"} color={{num1:255, num2:0, num3:0}}/>
           <Box disabled={this.state.disabled} active={this.state.box2} handleClick={this.handleClick} id={2} radius={"0 100px 0 0"} color={{num1:0, num2:255, num3:0}}/>
           <Box disabled={this.state.disabled} active={this.state.box4} handleClick={this.handleClick} id={4} radius={"0 0 0 100px"} color={{num1:255, num2:255, num3:0}}/>
           <Box disabled={this.state.disabled} active={this.state.box3} handleClick={this.handleClick} id={3} radius={"0 0 100px 0"} color={{num1:0, num2:0, num3:255}}/>
         </div>
-        <button onClick={this.startFunc}>Start Game</button>
+        {this.state.displayStartButton ? <button onClick={this.startFunc}>Start Game</button> : <button onClick={this.restartFunc}>Restart Game</button>}
       </div>
     )
   }
